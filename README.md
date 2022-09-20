@@ -32,7 +32,21 @@ $ kubectl get pods -A
 
 ### 1.2 Creación de cluster Kubernetes local multi-nodo
 
+* Para la creación del cluster multi-node especificamos un cluster de 2 nodos llamado 'multinode-demo' con el comando
 
+```
+minikube start --nodes 2 -p multinode-demo
+```
+
+<img src="images/minikube-start-cluster.png" width="65%">
+
+* De forma similar podemos listar los nodos del cluster y apreciar los 2 nodos desplegados.
+
+<img src="images/multinode_cluster-info.png" width="65%">
+
+* En esta ocasión si listamos los PODs del cluster se puede ver como algunos de estos estan desplegados en el segundo nodo del cluster
+
+<img src="images/multinode_get_pods.png" width="75%">
 
 ## 2. A Containerized application
 
