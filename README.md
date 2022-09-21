@@ -40,9 +40,17 @@ minikube start --nodes 2 -p multinode-demo
 
 <img src="images/minikube-start-cluster.png" width="65%">
 
+Podemos listar los cluster existentes con el comando
+
+```
+minikube profile list
+```
+
+<img src="images/1_2_profile_list.png" width="100%">
+
 * De forma similar podemos listar los nodos del cluster y apreciar los 2 nodos desplegados.
 
-<img src="images/multinode_cluster-info.png" width="65%">
+<img src="images/multinode_cluster-info.png" width="85%">
 
 * En esta ocasión si listamos los PODs del cluster se puede ver como algunos de estos estan desplegados en el segundo nodo del cluster
 
@@ -51,3 +59,118 @@ minikube start --nodes 2 -p multinode-demo
 ## 2. A Containerized application
 
 ## 3. Deployment a containerized application on Kubernetes
+### 3.1 Despliegue de aplicación en los diferentes clusters
+
+### a) Despliegue en cluster single-node
+
+### b) Despliegue en cluster multi-node
+
+* Definición del objeto deployment en Kubernetes
+
+Creamos el siguiente archivo hello-deployment.yaml
+
+```
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello
+spec:
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 100%
+  selector:
+    matchLabels:
+      app: hello
+  template:
+    metadata:
+      labels:
+        app: hello
+    spec:
+      affinity:
+        # ⬇⬇⬇ This ensures pods will land on separate hosts
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions: [{ key: app, operator: In, values: [hello] }]
+            topologyKey: "kubernetes.io/hostname"
+      containers:
+      - name: hello-from
+        image: pbitty/hello-from:latest
+        ports:
+          - name: http
+            containerPort: 80
+      terminationGracePeriodSeconds: 1
+```
+Destacamos de la definición del deployment los siguiente aspectos:
+
+> * replicas: el valor de *2* indica el número de replicas a desplegar en el cluster
+> * affinity: el valor *podAntiAffinity* nos asegura que las 2 pods se desplegerán en 2 nodos diferentes.
+
+* Ejecución de creación de deployment
+
+```
+kubectl apply -f hello-deployment.yaml
+```
+<img src="images/3_2_deployment.png" width="75%">
+
+* Verificación del deployment
+
+
+```
+kubectl rollout status deployment/hello 
+```
+
+<img src="images/3_2_rollout_status.png" width="75%">
+
+
+* Definición del objeto service en Kubernetes
+
+En el servicio definimos que el app *hello* utilice externamente el puero 31000 para redirigir el tráfico internamente al puerto 80.
+
+
+```
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hello
+spec:
+  type: NodePort
+  selector:
+    app: hello
+  ports:
+    - protocol: TCP
+      nodePort: 31000
+      port: 80
+      targetPort: http 
+```
+
+* Ejecución de creación de servicio
+
+```
+kubectl apply -f hello-svc.yaml
+minikube service list -p multinode-demo
+```
+
+<img src="images/3_2_create_service_multinode.png" width="75%">
+
+* Revisión del despliegue de PODs en multiples nodos del cluster
+Como se puede apreciar en la salida del siguiente comando, el despliegue de los 2 pods se realizó en los 2 Nodos del cluster
+
+```
+kubectl get pods -A -o wide
+```
+
+<img src="images/3_2_get_pods_multinode.png" width="100%">
+
+
+* Acceso y verificación del servicio
+
+Podemos comprobar con la aplicación desplegada que la respusta que recibe el cliente proviene de diferentes containers que a su vez residen en diferentes PODS
+
+<img src="images/3_2_curl_test.png" width="100%">
+
+### 3.2 Descripción del flujo de la aplicación
