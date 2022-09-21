@@ -298,7 +298,7 @@ Podemos comprobar con la aplicación desplegada que la respusta que recibe el cl
 ### b) Flujo bajo nivel
 
 <figure>
-<img src="images/3_2_low_level.png" width="1100" alt="">
+<img src="images/3_2_Low_Level.png" width="1100" alt="">
 <figcaption align = "center"><b>Figure - Diagrama bajo nivel</b></figcaption>
 </figure>
 [Fuente: diagrama bajo nivel](https://blog.heptio.com/core-kubernetes-jazz-improv-over-orchestration-a7903ea92ca)
