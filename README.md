@@ -288,3 +288,17 @@ Podemos comprobar con la aplicación desplegada que la respusta que recibe el cl
 <img src="images/3_2_curl_test.png" width="1100" alt="">
 
 ### 3.2 Descripción del flujo de la aplicación
+
+### a) Flujo alto nivel
+<figure>
+<img src="images/3_2_high_level.png" width="1100" alt="">
+<figcaption align = "center"><b>Figure - Diagrama alto nivel</b></figcaption>
+</figure>
+
+### b) Flujo bajo nivel
+
+<figure>
+<img src="images/3_2_low_level.png" width="1100" alt="">
+<figcaption align = "center"><b>Figure - Diagrama bajo nivel</b></figcaption>
+</figure>
+[Fuente: diagrama bajo nivel](https://blog.heptio.com/core-kubernetes-jazz-improv-over-orchestration-a7903ea92ca)
